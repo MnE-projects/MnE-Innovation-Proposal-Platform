@@ -40,10 +40,10 @@
     .scroll-showcase:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,102,0,.24),transparent 57%)}
     .scroll-inner{position:relative;perspective:800px}.scroll-label{margin-bottom:34px;color:var(--accent);font-size:.72rem;font-weight:850;letter-spacing:.24em;text-transform:uppercase}
     .scroll-word{display:flex;flex-wrap:wrap;justify-content:center;font-size:clamp(3.4rem,9vw,8rem);font-weight:900;line-height:.92;letter-spacing:-.065em}
-    .scroll-char{display:inline-block;will-change:transform,opacity}.scroll-line{width:190px;height:4px;margin:42px auto 0;background:var(--accent);transform:scaleX(0);transform-origin:center}
+    .scroll-text-line{display:contents}.scroll-char{display:inline-block;will-change:transform,opacity}.scroll-line{width:190px;height:4px;margin:42px auto 0;background:var(--accent);transform:scaleX(0);transform-origin:center}
     details .answer{max-height:0;overflow:hidden;opacity:0;transition:max-height .38s ease,opacity .28s ease,padding .38s ease;padding-bottom:0}
     details[open] .answer{max-height:220px;opacity:1;padding-bottom:30px}
-    @media(max-width:800px){.navlinks{display:none}.menu-btn{display:block}.scroll-showcase{min-height:58vh;padding-block:90px}.scroll-word{font-size:clamp(3rem,15vw,5rem)}}
+    @media(max-width:800px){.navlinks{display:none}.menu-btn{display:block}.scroll-showcase{min-height:58vh;padding-block:90px}.scroll-word{display:grid;gap:.08em;font-size:clamp(3.2rem,16vw,5.2rem);line-height:.92;white-space:nowrap}.scroll-text-line{display:flex;justify-content:center}}
     @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.scroll-char,.scroll-line{transform:none!important;opacity:1!important}}
   </style>
 </head>
@@ -82,8 +82,8 @@
   const details=[...document.querySelectorAll('.faq-list details')];
   details.forEach(item=>item.addEventListener('toggle',()=>{if(item.open) details.forEach(other=>{if(other!==item) other.open=false;});}));
 
-  const text='讓工作變得更好',word=document.getElementById('scrollWord'),showcase=document.getElementById('scrollShowcase'),line=document.getElementById('scrollLine');
-  [...text].forEach(char=>{const span=document.createElement('span');span.className='scroll-char';span.textContent=char;word.appendChild(span);});
+  const textLines=['讓工作','變得更好'],word=document.getElementById('scrollWord'),showcase=document.getElementById('scrollShowcase'),line=document.getElementById('scrollLine');
+  textLines.forEach(lineText=>{const row=document.createElement('span');row.className='scroll-text-line';[...lineText].forEach(char=>{const span=document.createElement('span');span.className='scroll-char';span.textContent=char;row.appendChild(span);});word.appendChild(row);});
   const chars=[...word.querySelectorAll('.scroll-char')],center=Math.floor(chars.length/2);
   function update(){if(reduced){chars.forEach(el=>{el.style.opacity=1});line.style.transform='scaleX(1)';return;}const rect=showcase.getBoundingClientRect(),vh=innerHeight;const progress=Math.max(0,Math.min(1,(vh-rect.top)/(vh+rect.height*.45)));chars.forEach((el,i)=>{const d=i-center;el.style.transform=`translate3d(${d*78*(1-progress)}px,${Math.abs(d)*30*(1-progress)}px,0) rotateX(${d*16*(1-progress)}deg)`;el.style.opacity=.08+.92*progress;});line.style.transform=`scaleX(${progress})`;}
   let busy=false;function requestUpdate(){if(!busy){requestAnimationFrame(()=>{update();busy=false;});busy=true;}}
