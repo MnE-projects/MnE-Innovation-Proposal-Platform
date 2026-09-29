@@ -15,6 +15,12 @@
 
 .hero-campaign-tip{margin-top:18px;color:var(--sub);font-size:.92rem;font-weight:800}.hero-campaign-tip strong{color:var(--accent)}
 .campaign{padding-block:clamp(42px,6vw,72px);background:#fff3e8;border-bottom:1px solid #f0c5a6}.campaign-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(360px,7fr);gap:clamp(30px,6vw,72px);align-items:center}.campaign-copy h2{margin:8px 0 12px;font-size:clamp(2.35rem,5vw,4.8rem);line-height:1;letter-spacing:-.05em}.campaign-period{margin:0;font-size:clamp(1.1rem,2vw,1.35rem);font-weight:900}.campaign-period time{color:var(--accent)}.campaign-benefits{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--fg);background:#fff}.campaign-card{display:flex;flex-direction:column;min-width:0;padding:clamp(26px,3.2vw,38px)}.campaign-card+.campaign-card{border-left:1px solid var(--border)}.campaign-card small{display:block;margin-bottom:clamp(22px,3vw,34px);color:var(--sub);font-size:.82rem;font-weight:900;letter-spacing:.08em;white-space:nowrap}.campaign-value{display:flex;align-items:baseline;gap:.22em;white-space:nowrap}.campaign-value .amount{color:var(--accent);font-size:clamp(2.65rem,4.25vw,4.5rem);font-weight:950;line-height:.9;letter-spacing:-.055em}.campaign-value .unit{color:var(--fg);font-size:clamp(1.05rem,1.55vw,1.35rem);font-weight:900}.campaign-subline{display:block;margin-top:14px;color:var(--fg);font-size:clamp(1rem,1.35vw,1.18rem);font-weight:900;line-height:1.35}.campaign-card p{max-width:28em;margin:20px 0 0;color:var(--sub);font-size:.94rem;line-height:1.65}.campaign-action{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-top:20px}.campaign-action .note{max-width:580px;margin:0;color:var(--sub);font-size:.82rem}.final-campaign{margin:0 0 8px;color:var(--accent);font-weight:900}
+.campaign.is-ended{padding-block:clamp(38px,5vw,58px)}
+.campaign.is-ended .campaign-grid{grid-template-columns:1fr;gap:22px;align-items:start}
+.campaign.is-ended .campaign-copy{max-width:760px}
+.campaign.is-ended .campaign-copy h2{margin-bottom:14px}
+.campaign.is-ended .campaign-period{max-width:720px;color:var(--sub);font-size:clamp(1rem,1.7vw,1.2rem);font-weight:750}
+.campaign.is-ended .campaign-action{justify-content:flex-start;margin-top:0}
 section{padding-block:clamp(72px,10vw,130px);border-bottom:1px solid var(--border)}.section-head{display:grid;grid-template-columns:4fr 8fr;gap:30px;margin-bottom:clamp(42px,7vw,76px)}.section-head h2{margin:5px 0 0;font-size:clamp(2.5rem,5.7vw,5rem);line-height:.98;letter-spacing:-.05em}.section-head p{max-width:650px;margin:14px 0 0;color:var(--sub);font-size:1.06rem}
 .fit{background:var(--muted)}.check-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--fg);border-left:1px solid var(--border)}.check-card{padding:clamp(26px,4vw,42px);border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:#fff}.check-card b{display:block;color:var(--accent);font:900 2.9rem/1 ui-monospace,monospace}.check-card h3{margin:24px 0 10px;font-size:1.45rem;line-height:1.2}.check-card p{margin:0;color:var(--sub)}.fit-result{margin-top:28px;padding:22px 26px;border-left:4px solid var(--accent);background:#fff;font-weight:800;font-size:1.08rem}
 .tabs{border-top:1px solid var(--fg)}.tab-list{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}.tab{border:0;border-right:1px solid var(--border);background:#fff;color:var(--sub);padding:18px 16px;text-align:left;font-weight:900;cursor:pointer}.tab:last-child{border-right:0}.tab small{display:block;color:var(--accent);font:800 .72rem ui-monospace,monospace}.tab[aria-selected="true"]{background:var(--fg);color:#fff;box-shadow:inset 0 -4px var(--accent)}.panel{padding:clamp(28px,5vw,52px);border:1px solid var(--border);border-top:0}.panel[hidden]{display:none}.panel-grid{display:grid;grid-template-columns:4fr 8fr;gap:clamp(26px,5vw,65px)}.panel-num{color:#e7e7e2;font:900 clamp(4.6rem,10vw,8.5rem)/.8 ui-monospace,monospace;letter-spacing:-.08em}.panel h3{margin:0 0 12px;font-size:clamp(1.65rem,3vw,2.5rem);white-space:normal;overflow-wrap:anywhere}.panel p{margin:0;color:var(--sub);white-space:normal;overflow-wrap:anywhere}.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}.example{padding:16px;border:1px solid var(--border);background:var(--muted);font-size:.94rem;font-weight:750;white-space:normal;overflow-wrap:anywhere}
@@ -123,21 +129,46 @@ section{padding-block:clamp(72px,10vw,130px);border-bottom:1px solid var(--borde
   document.querySelectorAll('.faq-list details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)d.parentElement.querySelectorAll('details').forEach(o=>{if(o!==d)o.open=false})}));
 
   const campaignDeadline=Date.parse('2026-10-15T23:59:59+08:00');
-  if(Date.now()>campaignDeadline){
+  let campaignEnded=false;
+
+  function applyCampaignEndState(){
+    if(campaignEnded)return;
+    campaignEnded=true;
+
+    const campaign=document.getElementById('campaign');
+    if(campaign)campaign.classList.add('is-ended');
+
     const campaignTitle=document.getElementById('campaign-title');
-    if(campaignTitle)campaignTitle.innerHTML='搶先體驗活動已結束';
+    if(campaignTitle)campaignTitle.textContent='搶先體驗活動已結束';
+
     document.querySelectorAll('.campaign-benefits,.campaign-action .note,.final-campaign').forEach(el=>el.hidden=true);
+
     const period=document.querySelector('.campaign-period');
-    if(period)period.textContent='搶先體驗活動已結束，改善提案平台仍持續開放。';
+    if(period)period.textContent='改善提案平台仍持續開放，歡迎提出你的改善想法。';
+
     const campaignAction=document.querySelector('.campaign-action');
     if(campaignAction){
-      campaignAction.style.justifyContent='flex-start';
       const actionLink=campaignAction.querySelector('a');
       if(actionLink)actionLink.childNodes[0].nodeValue='立即提出改善想法 →';
     }
+
     const heroTip=document.querySelector('.hero-campaign-tip');
-    if(heroTip)heroTip.textContent='搶先體驗活動已結束，改善提案平台仍持續開放。';
+    if(heroTip)heroTip.textContent='搶先體驗已結束｜改善提案平台持續開放';
   }
+
+  function checkCampaignDeadline(){
+    if(Date.now()>=campaignDeadline){
+      applyCampaignEndState();
+      return;
+    }
+    const remaining=campaignDeadline-Date.now()+1000;
+    setTimeout(checkCampaignDeadline,Math.min(remaining,2147483647));
+  }
+
+  checkCampaignDeadline();
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden&&Date.now()>=campaignDeadline)applyCampaignEndState();
+  });
 })();
 </script>
 </body></html>
